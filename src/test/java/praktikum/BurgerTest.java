@@ -1,6 +1,8 @@
 package praktikum;
 
+import org.assertj.core.api.SoftAssertions;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -22,6 +24,8 @@ public class BurgerTest {
     @Spy
     Burger spyBurger;
 
+    private SoftAssertions softAssertions;
+
     private final String expectedIngredient1Name = "Колбаса";
     private final IngredientType expectedIngredient1Type = IngredientType.FILLING;
     private final float expectedIngredient1Price = (float) 165.99;
@@ -34,6 +38,7 @@ public class BurgerTest {
     private final float expectedBunPrice = (float) 39.99;
 
     private final float expectedPrice = expectedBunPrice * 2 + expectedIngredient1Price + expectedIngredient2Price;
+
 
     private void makeBurger(Burger burger) {
         Mockito.when(bun.getName()).thenReturn(expectedBunName);
@@ -52,27 +57,57 @@ public class BurgerTest {
         burger.addIngredient(ingredient2);
     }
 
+    @Before
+    public void startUp(){
+        softAssertions = new SoftAssertions();
+    }
+
     @Test
     public void setBunsTest() {
         Burger burger = new Burger();
+        softAssertions.assertThat(burger.bun)
+                .as("Проверяем значение булки при инициализации Burger")
+                .isNull();
         burger.setBuns(bun);
-        Assert.assertNotNull(burger.bun);
+        softAssertions.assertThat(burger.bun)
+                .as("Проверяем значение булки после присвоения значения")
+                .isNotNull();
+        softAssertions.assertAll();
     }
 
     @Test
     public void addIngredientTest() {
         Burger burger = new Burger();
+        Assert.assertNotNull("Список ингредиентов должен быть инициализирован списком", burger.ingredients);
+        Assert.assertEquals("Список ингредиентов должен быть инициализирован списком с размером 0", 0, burger.ingredients.size());
+
+        int expectedSize = burger.ingredients.size();
         burger.addIngredient(ingredient1);
-        Assert.assertEquals(1, burger.ingredients.size());
-        Assert.assertNotNull(burger.ingredients.get(0));
+        expectedSize++;
+
+        softAssertions.assertThat(burger.ingredients.size())
+                .as("Проверяем значение размер списка ингредиентов")
+                .isEqualTo(expectedSize);
+        softAssertions.assertThat(burger.ingredients.get(0))
+                .as("Проверяем первое значение в списке")
+                .isNotNull();
+
+       softAssertions.assertAll();
     }
 
     @Test
     public void removeIngredientTest() {
         Burger burger = new Burger();
+        Assert.assertNotNull("Список ингредиентов должен быть инициализирован списком", burger.ingredients);
+        Assert.assertEquals("Список ингредиентов должен быть инициализирован списком с размером 0", 0, burger.ingredients.size());
+
+        int expectedSize = burger.ingredients.size();
         burger.addIngredient(ingredient1);
+        expectedSize++;
         burger.removeIngredient(0);
-        Assert.assertEquals(0, burger.ingredients.size());
+        expectedSize--;
+
+        Assert.assertEquals(expectedSize, burger.ingredients.size());
     }
 
     @Test
@@ -81,8 +116,15 @@ public class BurgerTest {
         makeBurger(burger);
 
         burger.moveIngredient(0, 1);
-        Assert.assertEquals(expectedIngredient2Name, burger.ingredients.get(0).getName());
-        Assert.assertEquals(expectedIngredient1Name, burger.ingredients.get(1).getName());
+
+        softAssertions.assertThat(burger.ingredients.get(0).getName())
+                .as("Проверяем значение первого ингредиента")
+                .isEqualTo(expectedIngredient2Name);
+        softAssertions.assertThat(burger.ingredients.get(1).getName())
+                .as("Проверяем значение первого ингредиента")
+                .isEqualTo(expectedIngredient1Name);
+
+        softAssertions.assertAll();
     }
 
     @Test

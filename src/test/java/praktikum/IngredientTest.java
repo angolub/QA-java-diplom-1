@@ -20,10 +20,10 @@ public class IngredientTest {
     @Parameterized.Parameters
     public static Object[][] getData() {
         return new Object[][] {
-                { IngredientType.SAUCE, "Кетчуп", (float) 20.55 },
-                { null, "", (float) 0 },
-                { IngredientType.FILLING, "Колбаса", (float) -20.9 },
-                { IngredientType.FILLING, "Колбаса вкусная вкусная вкусная вкусная вкусная вкусная вкусная вкусная вкусная", (float) 20.5588 }
+                { IngredientType.SAUCE, "Кетчуп", 20.55f },
+                { null, "", 0f },
+                { IngredientType.FILLING, "Колбаса", -20.9f },
+                { IngredientType.FILLING, "Колбаса вкусная вкусная вкусная вкусная вкусная вкусная вкусная вкусная вкусная", 20.55889999f }
         };
     }
 
